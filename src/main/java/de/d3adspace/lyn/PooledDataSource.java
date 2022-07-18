@@ -7,18 +7,18 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
-public final class LynDataSource implements DataSource {
+public final class PooledDataSource implements DataSource {
   private final DataSource dataSource;
   private final ConnectionPool connectionPool;
 
-  private LynDataSource(DataSource dataSource, ConnectionPool connectionPool) {
+  private PooledDataSource(DataSource dataSource, ConnectionPool connectionPool) {
     this.dataSource = dataSource;
     this.connectionPool = connectionPool;
   }
 
-  public static LynDataSource withDataSource(DataSource dataSource) {
+  public static PooledDataSource withDataSource(DataSource dataSource) {
     var pool = ConnectionPool.withDataSource(dataSource);
-    return new LynDataSource(dataSource, pool);
+    return new PooledDataSource(dataSource, pool);
   }
 
   @Override
