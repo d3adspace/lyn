@@ -15,12 +15,31 @@ public final class ConnectionPool {
     this.connectionQueue = connectionQueue;
   }
 
-  private static ConnectionPool of(DataSource dataSource, Queue<PooledConnection> connectionQueue) {
-    return new ConnectionPool(dataSource, connectionQueue);
+  private static final int DEFAULT_MAX_CONNECTIONS = 50;
+
+  public static ConnectionPool of(DataSource dataSource) throws SQLException {
+    return of(dataSource, DEFAULT_MAX_CONNECTIONS);
   }
 
-  public static ConnectionPool withDataSource(DataSource dataSource) {
-    return of(dataSource, new LinkedBlockingQueue<>());
+  private static final int DEFAULT_INITIAL_CONNECTIONS = 10;
+
+  public static ConnectionPool of(DataSource dataSource, int maxConnections) throws SQLException {
+    return of(dataSource, maxConnections, DEFAULT_INITIAL_CONNECTIONS);
+  }
+
+  public static ConnectionPool of(DataSource dataSource, int maxConnections, int initialConnections)
+      throws SQLException {
+    var connectionPool = new ConnectionPool(dataSource, new LinkedBlockingQueue<>(maxConnections));
+    connectionPool.fill(initialConnections);
+    return connectionPool;
+  }
+
+  private void fill(int initialConnections) throws SQLException {
+    for (int i = 0; i < initialConnections; i++) {
+      var originalConnection = dataSource.getConnection();
+      var connection = new PooledConnection(this, originalConnection);
+      connectionQueue.add(connection);
+    }
   }
 
   public Connection getConnection() throws SQLException {

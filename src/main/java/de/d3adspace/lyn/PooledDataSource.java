@@ -16,8 +16,8 @@ public final class PooledDataSource implements DataSource {
     this.connectionPool = connectionPool;
   }
 
-  public static PooledDataSource withDataSource(DataSource dataSource) {
-    var pool = ConnectionPool.withDataSource(dataSource);
+  public static PooledDataSource withDataSource(DataSource dataSource) throws SQLException {
+    var pool = ConnectionPool.of(dataSource);
     return new PooledDataSource(dataSource, pool);
   }
 
