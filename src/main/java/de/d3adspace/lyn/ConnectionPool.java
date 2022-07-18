@@ -2,6 +2,7 @@ package de.d3adspace.lyn;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.sql.DataSource;
@@ -29,6 +30,7 @@ public final class ConnectionPool {
 
   public static ConnectionPool of(DataSource dataSource, int maxConnections, int initialConnections)
       throws SQLException {
+    Objects.requireNonNull(dataSource, "dataSource must not be null");
     var connectionPool = new ConnectionPool(dataSource, new LinkedBlockingQueue<>(maxConnections));
     connectionPool.fill(initialConnections);
     return connectionPool;
