@@ -19,8 +19,10 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+import javax.sql.ConnectionEventListener;
+import javax.sql.StatementEventListener;
 
-public final class PooledConnection implements Connection {
+public final class PooledConnection implements Connection, javax.sql.PooledConnection {
   private final ConnectionPool connectionPool;
   private final Connection connection;
 
@@ -70,8 +72,33 @@ public final class PooledConnection implements Connection {
   }
 
   @Override
+  public Connection getConnection() throws SQLException {
+    return connection;
+  }
+
+  @Override
   public void close() throws SQLException {
     connectionPool.returnConnection(this);
+  }
+
+  @Override
+  public void addConnectionEventListener(ConnectionEventListener listener) {
+
+  }
+
+  @Override
+  public void removeConnectionEventListener(ConnectionEventListener listener) {
+
+  }
+
+  @Override
+  public void addStatementEventListener(StatementEventListener listener) {
+
+  }
+
+  @Override
+  public void removeStatementEventListener(StatementEventListener listener) {
+
   }
 
   @Override
